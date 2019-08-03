@@ -1,4 +1,5 @@
 FROM ubuntu:18.04
+MAINTAINER jml0@vt.edu
 
 # don't bother us
 ARG DEBIAN_FRONTEND=noninteractive
@@ -27,8 +28,21 @@ COPY db_init.sql /app/
 COPY hashmap_gen.py /app/
 COPY map_hash_num.php /var/www/html/
 
+# copy default config file so postgres inits
+RUN  cp /etc/postgresql/10/main/*.conf /var/lib/postgresql/10/main/ && \
+        mkdir /var/lib/postgresql/10/main/conf.d/
+
+# make sure permissions are set
+RUN  chown -R postgres:postgres /var/lib/postgresql && \
+     chown -R postgres:postgres /app
+
+# run as non-root
+USER postgres
+
 # prepare our database
-RUN  sudo -u postgres psql < /app/db_init.sql
+RUN  /usr/lib/postgresql/10/bin/pg_ctl -D \
+        /var/lib/postgresql/10/main -l /app/logfile start && \
+        psql < /app/db_init.sql
 
 # use entrypoint here
 ENTRYPOINT ['python', '/app/hashmap_gen.py']
