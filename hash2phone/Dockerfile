@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+# don't bother us
+ARG DEBIAN_FRONTEND=noninteractive
+
 # install dependencies
 RUN  apt update && \
      apt -y install postgresql                \
@@ -17,7 +20,7 @@ RUN  apt update && \
                     postgresql-server-dev-all \
                     sudo
 
-RUN  pip install pyscopg2
+RUN  pip install psycopg2
 
 # copy files into the container
 COPY db_init.sql /app/
