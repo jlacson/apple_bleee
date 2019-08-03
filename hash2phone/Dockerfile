@@ -37,9 +37,6 @@ RUN  cp /etc/postgresql/10/main/*.conf /var/lib/postgresql/10/main/ && \
 RUN  chown -R postgres:postgres /var/lib/postgresql && \
      chown -R postgres:postgres /app
 
-# run as non-root
-USER postgres
-
 # use entrypoint here
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD []
