@@ -26,6 +26,7 @@ RUN  pip install psycopg2
 # copy files into the container
 COPY db_init.sql /app/
 COPY hashmap_gen.py /app/
+COPY entrypoint.sh /app/
 COPY map_hash_num.php /var/www/html/
 
 # copy default config file so postgres inits
@@ -39,10 +40,6 @@ RUN  chown -R postgres:postgres /var/lib/postgresql && \
 # run as non-root
 USER postgres
 
-# prepare our database
-RUN  /usr/lib/postgresql/10/bin/pg_ctl -D \
-        /var/lib/postgresql/10/main -l /app/logfile start && \
-        psql < /app/db_init.sql
-
 # use entrypoint here
-ENTRYPOINT ['python', '/app/hashmap_gen.py']
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD []
