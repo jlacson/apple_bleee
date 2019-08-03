@@ -1,6 +1,8 @@
-FROM ubuntu:18.04
+# based on Debian, should work
+FROM postgres:10
+MAINTAINER jml0@vt.edu
 
-# don't bother us
+# don't bother us when installing packages
 ARG DEBIAN_FRONTEND=noninteractive
 
 # install dependencies
@@ -26,6 +28,9 @@ RUN  pip install psycopg2
 COPY db_init.sql /app/
 COPY hashmap_gen.py /app/
 COPY map_hash_num.php /var/www/html/
+
+# start postgres
+RUN  service postgresql start
 
 # prepare our database
 RUN  sudo -u postgres psql < /app/db_init.sql
